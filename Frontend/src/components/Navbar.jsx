@@ -2,20 +2,35 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
 import React from "react";
-import { Stack, Chip } from "@mui/material";
+import { Stack, Chip, Button, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import KeyboardVoiceIcon from "@mui/icons-material/KeyboardVoice";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import VideoCallOutlinedIcon from '@mui/icons-material/VideoCallOutlined';
+import Avatar from '@mui/material/Avatar';
 // import MenuIcon from "@mui/icons-material/Menu";
 
 import { first } from "../utils/constants";
 import { useState } from "react";
 import { Slider } from ".";
+import Logout from "../Pages/Logout";
+import Dropdown1 from "./Dropdown1";
+import Dropdown2 from "./Dropdown2";
 
-const Navbar = () => {
+
+const Navbar = ({user}) => {
+  const logout = () =>{
+    window.open('http://localhost:5000/auth/logout', '_self')
+  }
+  const google = () => {
+    window.open('http://localhost:5000/auth/google', '_self')
+  }
+  
+  const [open, setOpen] = useState(false)
   const [sidebar, setSidebar] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
   return (
@@ -60,14 +75,57 @@ const Navbar = () => {
         <YouTubeIcon fontSize="Large" /> Youtube
       </Link>
       <SearchBar />
-      <KeyboardVoiceIcon />
-      <MoreVertOutlinedIcon />
-      <Chip 
-        icon={<AccountCircleOutlinedIcon />}
-        label="Sign in"
-        variant="outlined"
-        size="large"
-      />
+      <IconButton><KeyboardVoiceIcon /></IconButton>
+      
+      
+      {user? (
+        <>
+       
+          <IconButton onClick={()=>{setOpen(!open)}}> 
+          <VideoCallOutlinedIcon />
+          </IconButton>
+          <IconButton onClick={()=>{setOpen(!open)}}> 
+          <NotificationsNoneIcon />
+          </IconButton>
+          <IconButton onClick={()=>{setOpen(!open)}}> 
+          {
+          open && <Dropdown2 user={user}/>
+        }
+        <Avatar
+            alt=''
+            // src={user._json.picture}
+            src={user.photos[0].value}
+            referrerpolicy="no-referrer"
+            sx={{ width: 35, height: 35 }} />
+       
+       </IconButton>
+       
+            <Logout/>
+            </>
+
+      ) : (
+        <>
+        {
+          open && <Dropdown1/>
+        }
+        <IconButton onClick={()=>{setOpen(!open)}}>
+          <MoreVertOutlinedIcon/>
+        </IconButton>
+        
+        <Chip
+              icon={<AccountCircleOutlinedIcon />}
+              label="Sign in"
+              variant="outlined"
+              size="large"
+              onClick={google} />
+          </>
+     
+      )}
+
+      
+      
+     
+     
     </Stack>
   );
 };
